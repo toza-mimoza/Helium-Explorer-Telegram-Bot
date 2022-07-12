@@ -1,18 +1,28 @@
-import json
-import asyncio
+from asyncore import read
 import aiohttp
 
-API_URL = 'https://api.helium.io'
+from util.read_secrets import read_secrets
+from util.request_formatter import get_human_readable_text
 
-headers = {
+SECRETS = read_secrets()
+BASE_URL = 'https://api.helium.io'
+API_URL = BASE_URL + '/' + '{api_version}' + '/' + '{route}'
+
+header = {
     'User-Agent': '1.20.3 (linux-gnu)'
 }
 # TO DO: aiohttp async requests
 
-async def get_bc_stats():
+async def get_request(URL, par = None):
+    async with aiohttp.ClientSession(headers=header) as session:
+        async with session.get(URL) as resp:
+            return await resp.json()
 
-    async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get(API_URL+'/v1/stats') as resp:
-            r = json.loads(await resp.read())
-            print(r)
-            return r
+async def get_bc_stats():
+    return await get_request(API_URL.format(api_version='v1', route='stats'))
+
+async def get_token_supply():
+    return await get_request(API_URL.format(api_version='v1', route='stats/token_supply'))
+
+async def get_hotspot_data():
+    return await get_request(API_URL.format(api_version='v1', route='hotspots/'+SECRETS['HOTSPOT_ADDRESS']))

@@ -1,7 +1,8 @@
 import asyncio
 from telegram import Update
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
-from bot.helium_requests import get_bc_stats
+from bot.helium_requests import *
 
 async def start(update: Update, context: ContextTypes):
     '''
@@ -15,9 +16,24 @@ async def echo(update: Update, context: ContextTypes):
     '''
     await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
 
-async def get_blockchain_stats(update: Update, context: ContextTypes):
+async def send_blockchain_stats(update: Update, context: ContextTypes):
     '''
-    Echo Helium Blockchain API
+    Get Helium Blockchain stats
     '''
     response = await get_bc_stats()
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=response, parse_mode=ParseMode.MARKDOWN)
+
+
+async def send_token_supply(update: Update, context: ContextTypes):
+    '''
+    Get current token supply
+    '''
+    response = await get_token_supply()
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+
+async def send_hotspot_data(update: Update, context: ContextTypes):
+    '''
+    Get current token supply
+    '''
+    response = await get_hotspot_data()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
