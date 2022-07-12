@@ -11,5 +11,7 @@ if __name__ == "__main__":
     
     application = init_bot()
     application.add_handler(start_handler)
+    application.add_handler(echo_handler)
+    application.add_handler(bc_stats_handler)
     
     application.run_polling()
