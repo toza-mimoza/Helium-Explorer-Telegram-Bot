@@ -37,3 +37,17 @@ async def send_hotspot_data(update: Update, context: ContextTypes):
     '''
     response = await get_hotspot_data()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+
+async def send_all_hotspot_activity(update: Update, context: ContextTypes):
+    '''
+    Get current token supply
+    '''
+    response = await get_hotspot_activity()
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+
+async def send_recent_hotspot_activity(update: Update, context: ContextTypes):
+    '''
+    Get recent 24h hotspot activity
+    '''
+    response = await get_hotspot_activity()
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=response)

@@ -11,7 +11,16 @@ API_URL = BASE_URL + '/' + '{api_version}' + '/' + '{route}'
 header = {
     'User-Agent': '1.20.3 (linux-gnu)'
 }
-# TO DO: aiohttp async requests
+
+
+hotspot_activity = {
+    '''
+    Last 24h of hotspot activity.
+    '''
+    'transactions': [],
+    'witnessed': [],
+    'last_updated_at': ''
+}
 
 async def get_request(URL, par = None):
     async with aiohttp.ClientSession(headers=header) as session:
@@ -26,3 +35,9 @@ async def get_token_supply():
 
 async def get_hotspot_data():
     return await get_request(API_URL.format(api_version='v1', route='hotspots/'+SECRETS['HOTSPOT_ADDRESS']))
+
+async def get_hotspot_activity():
+    return await get_request(API_URL.format(api_version='v1', route='hotspots/'+SECRETS['HOTSPOT_ADDRESS']+'/roles'))
+
+async def get_recent_hotspot_activity():
+    return await get_request(API_URL.format(api_version='v1', route='hotspots/'+SECRETS['HOTSPOT_ADDRESS']+'/roles'))

@@ -13,7 +13,9 @@ def init_bot():
             echo_handler,
             bc_stats_handler,
             tk_supply_handler,
-            hotspot_data_handler
+            hotspot_data_handler,
+            hotspot_all_activity_handler,
+            hotspot_recent_activity_handler
         )
     )
     return application
