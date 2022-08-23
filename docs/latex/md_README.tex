@@ -1,0 +1,11 @@
+\hypertarget{md_README_autotoc_md1}{}\doxysection{NOTE\+: Work In Progress, do not install!}\label{md_README_autotoc_md1}
+This is a repository for a Telegram bot for Helium API written in Python.
+
+Available commands\+:
+\begin{DoxyItemize}
+\item $\ast$$\ast$/start$\ast$$\ast$\+: Right now it returns placeholder text, it will be converted into first time setup for a hotspot owner with one or multiple hotspots.
+\item {\bfseries{\mbox{[}any text\mbox{]}}} -\/ this triggers echo action which returns text, otherwise not a command, back to the user.
+\item {\bfseries{bc\+\_\+stats}} -\/ returns current blockchain statistics.
+\item {\bfseries{tk\+\_\+supply}} -\/ returns Helium token supply data.
+\item {\bfseries{hs\+\_\+data}} -\/ returns data for a hotspot, right now it pulls the hotspot id from a $\ast$.secret/secrets.\+json$\ast$ HOTSPOT\+\_\+\+ADDRESS attribute which was not included in the repository, will be replaced with ZODB persistent object DB. 
+\end{DoxyItemize}
