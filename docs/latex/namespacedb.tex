@@ -1,0 +1,48 @@
+\hypertarget{namespacedb}{}\doxysection{db Namespace Reference}
+\label{namespacedb}\index{db@{db}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{namespacedb_a09bc4159b7574af7e4a6183084ebbd1f}{store\+\_\+obj}} (obj)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacedb_a9243e119ff9aaf1213f6b2156c2e68a6}{compressed\+\_\+storage}} = zc.\+zlibstorage.\+Zlib\+Storage(\mbox{\hyperlink{namespacedb_a67d3835fa55f1cccbb4f625a69154ed7}{storage}})
+\item 
+\mbox{\hyperlink{namespacedb_a89a7f6028a19c3dc081cc5f16eb53891}{db}} = ZODB.\+DB(\mbox{\hyperlink{namespacedb_a9243e119ff9aaf1213f6b2156c2e68a6}{compressed\+\_\+storage}})
+\item 
+\mbox{\hyperlink{namespacedb_a67d3835fa55f1cccbb4f625a69154ed7}{storage}} = ZODB.\+File\+Storage.\+File\+Storage(\textquotesingle{}data.\+fs\textquotesingle{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacedb_a09bc4159b7574af7e4a6183084ebbd1f}\label{namespacedb_a09bc4159b7574af7e4a6183084ebbd1f}} 
+\index{db@{db}!store\_obj@{store\_obj}}
+\index{store\_obj@{store\_obj}!db@{db}}
+\doxysubsubsection{\texorpdfstring{store\_obj()}{store\_obj()}}
+{\footnotesize\ttfamily def store\+\_\+obj (\begin{DoxyParamCaption}\item[{}]{obj }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Store an object in ZODB.
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacedb_a9243e119ff9aaf1213f6b2156c2e68a6}\label{namespacedb_a9243e119ff9aaf1213f6b2156c2e68a6}} 
+\index{db@{db}!compressed\_storage@{compressed\_storage}}
+\index{compressed\_storage@{compressed\_storage}!db@{db}}
+\doxysubsubsection{\texorpdfstring{compressed\_storage}{compressed\_storage}}
+{\footnotesize\ttfamily compressed\+\_\+storage = zc.\+zlibstorage.\+Zlib\+Storage(\mbox{\hyperlink{namespacedb_a67d3835fa55f1cccbb4f625a69154ed7}{storage}})}
+
+\mbox{\Hypertarget{namespacedb_a89a7f6028a19c3dc081cc5f16eb53891}\label{namespacedb_a89a7f6028a19c3dc081cc5f16eb53891}} 
+\index{db@{db}!db@{db}}
+\index{db@{db}!db@{db}}
+\doxysubsubsection{\texorpdfstring{db}{db}}
+{\footnotesize\ttfamily db = ZODB.\+DB(\mbox{\hyperlink{namespacedb_a9243e119ff9aaf1213f6b2156c2e68a6}{compressed\+\_\+storage}})}
+
+\mbox{\Hypertarget{namespacedb_a67d3835fa55f1cccbb4f625a69154ed7}\label{namespacedb_a67d3835fa55f1cccbb4f625a69154ed7}} 
+\index{db@{db}!storage@{storage}}
+\index{storage@{storage}!db@{db}}
+\doxysubsubsection{\texorpdfstring{storage}{storage}}
+{\footnotesize\ttfamily storage = ZODB.\+File\+Storage.\+File\+Storage(\textquotesingle{}data.\+fs\textquotesingle{})}
+
