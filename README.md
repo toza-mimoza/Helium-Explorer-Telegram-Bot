@@ -8,5 +8,3 @@ Available commands:
 - **bc_stats** - returns current blockchain statistics.
 - **tk_supply** - returns Helium token supply data.
 - **hs_data** - returns data for a hotspot, right now it pulls the hotspot id from a *.secret/secrets.json* HOTSPOT_ADDRESS attribute which was not included in the repository, will be replaced with ZODB persistent object DB.
-- **hs_activity_all** - TO-DO.
-- **hs_activity_recent** - TO-DO.
