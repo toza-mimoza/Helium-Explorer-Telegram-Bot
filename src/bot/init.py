@@ -5,6 +5,7 @@ from util.read_secrets import read_secrets
 
 SECRETS = read_secrets()
 
+
 def init_bot():
     application = ApplicationBuilder().token(SECRETS["BOT_TOKEN"]).build()
     application.add_handlers(
