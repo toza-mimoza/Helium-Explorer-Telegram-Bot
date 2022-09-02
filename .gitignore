@@ -3,3 +3,7 @@ venv/
 logs/
 __pycache__/
 *.sh
+*.fs
+*.fs.lock
+*.fs.index
+*.fs.tmp
