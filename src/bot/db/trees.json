@@ -1,0 +1,8 @@
+{
+    "trees": [
+        {"name": "users", "description": "OOB Tree for Telegram users."},
+        {"name": "owners", "description": "OOB Tree for hotspot owners."},
+        {"name": "hotspots", "description": "OOB Tree for hotspot data."},
+        {"name": "activities", "description": "OOB Tree for hotspot activities."}
+    ]
+}
