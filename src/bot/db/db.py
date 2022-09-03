@@ -1,6 +1,8 @@
 import logging
 import json
 import os
+import transaction
+
 from typing import Any
 
 import ZODB, ZODB.FileStorage, zc.zlibstorage
@@ -8,9 +10,14 @@ from BTrees.OOBTree import OOBTree
 
 log = logging.getLogger(__name__)
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-storage = ZODB.FileStorage.FileStorage('data.fs')
-compressed_storage = zc.zlibstorage.ZlibStorage(storage)
-db = ZODB.DB(compressed_storage)
+zstorage = ZODB.FileStorage.FileStorage('dataz.fs')
+try:
+    db = ZODB.DB(zstorage)
+except:
+    zstorage.close()
+    zstorage = zc.zlibstorage.ZlibStorage(ZODB.FileStorage.FileStorage('dataz.fs'))
+    db = ZODB.DB(zstorage)
+
 
 class DBManager():
     
@@ -36,10 +43,10 @@ class DBManager():
         """! Get method for records in the DB.
         @param tree_name name of the OOBTree tree for the record
         @param uuid unique id of the record
-        @return 1 if record added, 0 if not added and a record with same uuid already exists
+        @return 1 if record found, 0 if not found
         """
-        with db.transaction() as connection: 
-            return connection.root()[tree_name].get(uuid)
+        conn = db.open()
+        return conn.root()[tree_name].get(uuid)
             
     @staticmethod
     def insert_record(tree_name: str, uuid: str, object: Any):
@@ -79,7 +86,7 @@ class DBManager():
         """
         with db.transaction() as connection:
             connection.root()[tree_name].get(uuid).active = False
-        
+                
     ###############################################
     # Initalization methods for trees.            #
     ###############################################     
