@@ -10,6 +10,12 @@ class User(BaseModel):
         self.telegram_id = telegram_id
         self.telegram_username = telegram_username
         self.last_active_at = get_iso_utc_time()
+    
+    def __hash__(self) -> int:
+        return hash(self.telegram_id, self.telegram_username)
+    
+    def __eq__(self, __o: object) -> bool:
+        return isinstance(__o, self.__class__) and self.telegram_id == __o.telegram_id
 
     def set_last_active(self, iso_time):
         self.last_active_at = iso_time
