@@ -53,6 +53,24 @@ class DBManager():
             connection.root()[tree_name].insert(uuid, object)
     
     @staticmethod
+    def update_record(tree_name: str, uuid: str, object: Any):
+        """! Update method for records in the DB.
+        @param tree_name name of the OOBTree tree for the record
+        @param uuid unique id of the record
+        @param object data for the record 
+        @return 1 if record added, 0 if not updated or not found
+        """
+        if(DBManager.tree_exists(tree_name)):
+            with db.transaction() as connection: 
+                if(connection.root()[tree_name].get(uuid) == 0):
+                    return 0
+                else:
+                    connection.root()[tree_name][uuid] = object
+                    return 1
+        else:
+            print("this happens")
+            return 0
+    @staticmethod
     def delete_record(tree_name: str, uuid: str):
         """! Delete method marks record as active = False and thereby ready for later deletion from DB.
         @param tree_name name of the OOBTree tree for the record to be inserted into
