@@ -3,7 +3,7 @@ import json
 import os
 import transaction
 
-from typing import Any
+from typing import Any, Optional
 
 import ZODB, ZODB.FileStorage, zc.zlibstorage
 from BTrees.OOBTree import OOBTree
@@ -39,13 +39,14 @@ class DBManager():
     ###############################################
 
     @staticmethod
-    def get_record(tree_name: str, uuid: str):
+    def get_record(tree_name: str, uuid: str, conn: Optional[ZODB.connection] = None):
         """! Get method for records in the DB.
         @param tree_name name of the OOBTree tree for the record
         @param uuid unique id of the record
-        @return 1 if record found, 0 if not found
+        @return 1 if record found, 0 if not found 
         """
-        conn = db.open()
+        if not conn:
+            conn = db.open()
         return conn.root()[tree_name].get(uuid)
             
     @staticmethod
