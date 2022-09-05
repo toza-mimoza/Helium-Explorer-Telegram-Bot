@@ -1,5 +1,6 @@
 from typing import List
 from .BaseModel import BaseModel
+from src.util.constants import TREE_NAME_OWNERS
 
 class Owner(BaseModel):
     '''
@@ -7,7 +8,7 @@ class Owner(BaseModel):
     '''
     def __init__(self, helium_address, fk_user_id) -> None:
         # owner id is the helium user address 
-        super().__init__()
+        super().__init__(TREE_NAME_OWNERS)
         self.helium_address = helium_address
         self.telegram_user_id = fk_user_id
 

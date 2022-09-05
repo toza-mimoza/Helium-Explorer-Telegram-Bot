@@ -1,1 +1,5 @@
 DB_APP_NAME = 'helium.telegram.bot'
+TREE_NAME_USERS = 'users'
+TREE_NAME_HOTSPOTS = 'hotspots'
+TREE_NAME_ACTIVITIES = 'activities'
+TREE_NAME_OWNERS = 'owners'

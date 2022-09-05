@@ -1,12 +1,13 @@
 from .BaseModel import BaseModel
 from src.util.time_helper import get_iso_utc_time
+from src.util.constants import TREE_NAME_USERS
 
 class User(BaseModel):
     '''
     Telegram user class for the user talking to the bot
     '''
     def __init__(self, telegram_id, telegram_username: str) -> None:
-        super().__init__()
+        super().__init__(TREE_NAME_USERS)
         self.telegram_id = telegram_id
         self.telegram_username = telegram_username
         self.last_active_at = get_iso_utc_time()

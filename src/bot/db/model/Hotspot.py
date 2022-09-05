@@ -1,8 +1,9 @@
 from .BaseModel import BaseModel
+from src.util.constants import TREE_NAME_HOTSPOTS
 
 class Hotspot(BaseModel):
     def __init__(self, hotspot_address: str, animal_name: str, fk_owner_address: str) -> None:
-        super().__init__()
+        super().__init__(TREE_NAME_HOTSPOTS)
         self.animal_name = animal_name
         self.hotspot_address = hotspot_address
         self.owner_address = fk_owner_address

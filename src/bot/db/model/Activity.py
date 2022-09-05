@@ -1,8 +1,9 @@
 from .BaseModel import BaseModel
+from src.util.constants import TREE_NAME_ACTIVITIES
 
 class Activity(BaseModel):
     def __init__(self, fk_owner_address: str, fk_hotspot_address: str) -> None:
-        super().__init__()
+        super().__init__(TREE_NAME_ACTIVITIES)
         self.owner_address = fk_owner_address
         self.hotspot_address = fk_hotspot_address
 
