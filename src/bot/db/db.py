@@ -1,16 +1,22 @@
 import logging
 import json
 import os
-import transaction
-
-from typing import Any, Optional
-
-import ZODB, ZODB.FileStorage, zc.zlibstorage
 from BTrees.OOBTree import OOBTree
+from typing import Any, Optional
+import ZODB, ZODB.FileStorage, zc.zlibstorage
+from zope.generations.interfaces import ISchemaManager
+from zope.generations.generations import evolveMinimumSubscriber
+from zope.generations.generations import generations_key
+from zope.component import provideUtility
+
+from .DBUpgradeSchemaManager import DBUpgradeSchemaManager
+from .db_events import DatabaseOpenedEventStub
+from src.util.constants import DB_APP_NAME
 
 log = logging.getLogger(__name__)
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 zstorage = ZODB.FileStorage.FileStorage('dataz.fs')
+
 try:
     db = ZODB.DB(zstorage)
 except:
@@ -18,6 +24,9 @@ except:
     zstorage = zc.zlibstorage.ZlibStorage(ZODB.FileStorage.FileStorage('dataz.fs'))
     db = ZODB.DB(zstorage)
 
+upgrade_manager = DBUpgradeSchemaManager()
+provideUtility(upgrade_manager, ISchemaManager, name='helium.telegram.bot')
+evolveMinimumSubscriber(DatabaseOpenedEventStub(db))
 
 class DBManager():
     
@@ -34,6 +43,17 @@ class DBManager():
         """
         return db
 
+    @staticmethod
+    def get_current_db_generation(conn: Optional[ZODB.connection] = None):
+        """! Getter method for the DB upgrade generation.
+        @param conn optional DB connection
+        @return int
+        """
+        if not conn:
+            conn = db.open()
+        return conn.root()[generations_key][DB_APP_NAME] 
+
+    
     ###############################################
     # Get, Insert, Update and Delete methods.     #
     ###############################################
