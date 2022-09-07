@@ -8,12 +8,12 @@ class User(BaseModel):
     '''
     def __init__(self, telegram_id, telegram_username: str) -> None:
         super().__init__(TREE_NAME_USERS)
-        self.telegram_id = telegram_id
+        self.telegram_user_id = telegram_id
         self.telegram_username = telegram_username
         self.last_active_at = get_iso_utc_time()
     
     def __hash__(self) -> int:
-        return hash(self.telegram_id, self.telegram_username)
+        return hash(self.telegram_user_id, self.telegram_username)
     
     def __eq__(self, __o: object) -> bool:
         return isinstance(__o, self.__class__) and self.telegram_id == __o.telegram_id
