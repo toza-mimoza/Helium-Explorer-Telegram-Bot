@@ -1,5 +1,5 @@
 # Helium-Telegram-Bot
-## NOTE: Work In Progress, do not install!
+## NOTE: Work In Progress!
 This is a repository for a Telegram bot for Helium API written in Python.
 
 Available commands: 
