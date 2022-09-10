@@ -8,8 +8,8 @@ class DbConstants():
 
 class UiLabels():
     UI_LABEL_MAIN_MENU = 'Choose one of the following options:'
-    UI_LABEL_OPTION_START = 'Start Bot 🚀'
-    UI_LABEL_OPTION_END = 'End Bot 🤚'
-    UI_LABEL_OPTION_SETTINGS = 'Settings ⚙'
-    UI_LABEL_OPTION_SNOOZE = 'Snooze ⏰'
+    UI_LABEL_MENU_START = 'Start Bot 🚀'
+    UI_LABEL_MENU_END = 'End Bot 🤚'
+    UI_LABEL_MENU_SETTINGS = 'Settings ⚙'
+    UI_LABEL_MENU_SNOOZE = 'Snooze ⏰'
     UI_LABEL_STUB = 'STUB LABEL'

@@ -3,7 +3,7 @@ from setuptools import Command
 from telegram.ext import filters, CommandHandler, MessageHandler
 from telegram.ext import ContextTypes
 
-from .actions import *
+from .helium.actions import *
 from .ui_actions import *
 from util.constants import UiLabels
 from .ui_actions import ui_start, ui_end, ui_snooze, ui_settings 
@@ -19,18 +19,18 @@ hotspot_recent_activity_command_handler = CommandHandler('hs_activity_recent', s
 async def ui_message_processor(update: Update, context: ContextTypes):
     
     received = update.message.text
-    if UiLabels.UI_LABEL_OPTION_START in received:
+    if UiLabels.UI_LABEL_MENU_START in received:
         # start invoked
         await ui_start(update, context)
-    elif UiLabels.UI_LABEL_OPTION_END in received:
+    elif UiLabels.UI_LABEL_MENU_END in received:
         # end invoked 
         await ui_end(update, context)
         pass
-    elif UiLabels.UI_LABEL_OPTION_SNOOZE in received:
+    elif UiLabels.UI_LABEL_MENU_SNOOZE in received:
         # snooze options
         await ui_snooze(update, context)
         pass
-    elif UiLabels.UI_LABEL_OPTION_SETTINGS in received:
+    elif UiLabels.UI_LABEL_MENU_SETTINGS in received:
         # settings main menu 
         await ui_settings(update, context)
         pass

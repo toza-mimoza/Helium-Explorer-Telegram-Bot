@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
-from bot.helium_requests import *
+from bot.helium.helium_requests import *
 
 async def echo(update: Update, context: ContextTypes):
     '''
