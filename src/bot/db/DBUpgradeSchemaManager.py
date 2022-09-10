@@ -3,15 +3,17 @@ gsm = globalregistry.getGlobalSiteManager()
 from zope.generations.interfaces import IInstallableSchemaManager
 from zope.interface import implementer
 
+
 @implementer(IInstallableSchemaManager)
 class DBUpgradeSchemaManager(object):
     minimum_generation = 1
     generation = 1
     
     def install(self, context):
-        root = context.connection.root()
+        from .DBManager import DBManager    
         # preload db here
-
+        DBManager.init_db()
+        # root = context.connection.root()
         # end preload db
     
     def evolve(self, context, generation):

@@ -1,7 +1,7 @@
 import persistent
 import uuid
 from src.util.time_helper import get_iso_utc_time
-from src.bot.db.db import DBManager
+from src.bot.db.DBManager import DBManager
 class BaseModel(persistent.Persistent):
     def __init__(self, tree_name):
         self.active = True
