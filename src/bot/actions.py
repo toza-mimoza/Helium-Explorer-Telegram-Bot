@@ -1,14 +1,7 @@
-import asyncio
 from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 from bot.helium_requests import *
-
-async def start(update: Update, context: ContextTypes):
-    '''
-    /start bot command.
-    '''
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
 async def echo(update: Update, context: ContextTypes):
     '''
@@ -22,7 +15,6 @@ async def send_blockchain_stats(update: Update, context: ContextTypes):
     '''
     response = await get_bc_stats()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=response, parse_mode=ParseMode.MARKDOWN)
-
 
 async def send_token_supply(update: Update, context: ContextTypes):
     '''
