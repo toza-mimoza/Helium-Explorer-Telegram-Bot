@@ -1,6 +1,6 @@
 from typing import List
 from .BaseModel import BaseModel
-from src.util.constants import TREE_NAME_OWNERS
+from src.util.constants import DbConstants
 
 class Owner(BaseModel):
     '''
@@ -8,7 +8,7 @@ class Owner(BaseModel):
     '''
     def __init__(self, helium_address, fk_user_id) -> None:
         # owner id is the helium user address 
-        super().__init__(TREE_NAME_OWNERS)
+        super().__init__(DbConstants.TREE_NAME_OWNERS)
         self.helium_address = helium_address
         self.telegram_user_id = fk_user_id
 
