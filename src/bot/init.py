@@ -31,7 +31,11 @@ from bot.handlers import *
 from util.read_secrets import read_secrets
 from bot.db.DBUpgradeSchemaManager import DBUpgradeSchemaManager
 
+from bot.ui.menu.MenuNode import MenuNode
+from bot.ui.items import *
+
 from util.constants import DbConstants
+
 SECRETS = read_secrets()
 
 

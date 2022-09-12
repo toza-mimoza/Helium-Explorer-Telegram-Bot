@@ -1,12 +1,10 @@
-from email.message import Message
-from setuptools import Command
 from telegram.ext import filters, CommandHandler, MessageHandler
 from telegram.ext import ContextTypes
 
 from .helium.actions import *
-from .ui_actions import *
+from .ui.actions import *
 from util.constants import UiLabels
-from .ui_actions import ui_start, ui_end, ui_snooze, ui_settings 
+from .ui.actions import *
 
 start_command_handler = CommandHandler('start', ui_start)
 echo_command_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
@@ -22,9 +20,17 @@ async def ui_message_processor(update: Update, context: ContextTypes):
     if UiLabels.UI_LABEL_MENU_START in received:
         # start invoked
         await ui_start(update, context)
-    elif UiLabels.UI_LABEL_MENU_END in received:
+    elif UiLabels.UI_LABEL_MENU_STOP in received:
         # end invoked 
-        await ui_end(update, context)
+        await ui_stop(update, context)
+        pass
+    elif UiLabels.UI_LABEL_MENU_BACK in received:
+        # end invoked 
+        await ui_back(update, context)
+        pass
+    elif UiLabels.UI_LABEL_MENU_OVERVIEW in received:
+        # end invoked 
+        await ui_overview(update, context)
         pass
     elif UiLabels.UI_LABEL_MENU_SNOOZE in received:
         # snooze options
