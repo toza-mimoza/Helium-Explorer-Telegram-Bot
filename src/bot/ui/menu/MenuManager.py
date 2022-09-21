@@ -2,6 +2,7 @@ from typing import List
 from operator import attrgetter
 
 from bot.ui.menu.MenuNode import MenuNode
+from util.constants import UiLabels
 from util.time_helper import get_iso_utc_time, get_time_diff_timedelta
 
 
@@ -52,7 +53,7 @@ class MenuManager:
     def delete_oldest_periodically(self, period_seconds):
         
         oldest = max(self.nodes, key=attrgetter('last_used_at'))
-        if(oldest == 'Main Menu'):
+        if(oldest == UiLabels.UI_LABEL_MAIN_MENU):
             nodes_wo_main_menu = list(self.nodes)
             nodes_wo_main_menu.remove(oldest)
             oldest = max(nodes_wo_main_menu, key=attrgetter('last_used_at'))
