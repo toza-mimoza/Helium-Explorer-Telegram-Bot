@@ -3,6 +3,9 @@
         {"name": "users", "description": "OOB Tree for Telegram users."},
         {"name": "owners", "description": "OOB Tree for hotspot owners."},
         {"name": "hotspots", "description": "OOB Tree for hotspot data."},
-        {"name": "activities", "description": "OOB Tree for hotspot activities."}
+        {"name": "activities", "description": "OOB Tree for hotspot activities."},
+        {"name": "events_log", "description": "OOB Tree for logging events."},
+        {"name": "configuration", "description": "OOB Tree for bot configurations."},
+        {"name": "bot", "description": "OOB Tree for non-critical bot data. This tree should only contain only one entry for this bot."}
     ]
 }

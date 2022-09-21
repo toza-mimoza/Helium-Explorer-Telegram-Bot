@@ -1,9 +1,9 @@
 from .BaseModel import BaseModel
-from src.util.constants import DbConstants
+from util.constants import DbConstants
 
 class Activity(BaseModel):
     def __init__(self, fk_owner_address: str, fk_hotspot_address: str) -> None:
-        super().__init__(DbConstants.TREE_NAME_ACTIVITIES)
+        super().__init__(DbConstants.TREE_ACTIVITIES)
         self.owner_address = fk_owner_address
         self.hotspot_address = fk_hotspot_address
 

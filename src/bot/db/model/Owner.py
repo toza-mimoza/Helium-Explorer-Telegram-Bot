@@ -1,14 +1,14 @@
 from typing import List
 from .BaseModel import BaseModel
-from src.util.constants import DbConstants
+from util.constants import DbConstants
 
 class Owner(BaseModel):
     '''
     Hotspot owner class
     '''
     def __init__(self, helium_address, fk_user_id) -> None:
-        # owner id is the helium user address 
-        super().__init__(DbConstants.TREE_NAME_OWNERS)
+        # owner id is the helium account address 
+        super().__init__(DbConstants.TREE_OWNERS)
         self.helium_address = helium_address
         self.telegram_user_id = fk_user_id
 

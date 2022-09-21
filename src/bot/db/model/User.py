@@ -1,13 +1,13 @@
 from .BaseModel import BaseModel
-from src.util.time_helper import get_iso_utc_time
-from src.util.constants import DbConstants
+from util.time_helper import get_iso_utc_time
+from util.constants import DbConstants
 
 class User(BaseModel):
     '''
     Telegram user class for the user talking to the bot
     '''
     def __init__(self, telegram_id, telegram_username: str) -> None:
-        super().__init__(DbConstants.TREE_NAME_USERS)
+        super().__init__(DbConstants.TREE_USERS)
         self.telegram_user_id = telegram_id
         self.telegram_username = telegram_username
         self.last_active_at = get_iso_utc_time()
@@ -16,7 +16,7 @@ class User(BaseModel):
         return hash(self.telegram_user_id, self.telegram_username)
     
     def __eq__(self, __o: object) -> bool:
-        return isinstance(__o, self.__class__) and self.telegram_id == __o.telegram_id
+        return isinstance(__o, self.__class__) and self.telegram_user_id == __o.telegram_user_id
 
     def set_last_active(self, iso_time):
         self.last_active_at = iso_time
