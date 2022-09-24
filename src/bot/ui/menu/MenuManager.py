@@ -1,18 +1,31 @@
 from typing import List
 from operator import attrgetter
+from bot.db.DBUtil import DBUtil
+from bot.db.model.BaseModel import BaseModel
 
 from bot.ui.menu.MenuNode import MenuNode
-from util.constants import UiLabels
+from util.constants import DbConstants, UiLabels
 from util.time_helper import get_iso_utc_time, get_time_diff_timedelta
+from util.exceptions import MenuManagerListIndexOutOfRange
 
-
-class MenuManager:
-    def __init__(self) -> None:
+class MenuManager(BaseModel):
+    def __init__(self, telegram_user_id: str) -> None:
+        super().__init__(DbConstants.TREE_MENU_NODES, custom_uuid=telegram_user_id)
         self.nodes: List[MenuNode] = []
         self.current: MenuNode = None
+        self.telegram_user_id = telegram_user_id
+        
+    def set_menu_nodes(self, nodes):
+        """! Sets MenuNode list for the manager."""
+        self.nodes = nodes
+        self.update()
 
     def set_current_menu(self, menu: MenuNode):
         self.current = menu
+        self.update()
+    
+    def get_current_menu(self) -> MenuNode:
+        return self.current
 
     def set_menu(self, node: MenuNode):
         found = False
@@ -33,6 +46,7 @@ class MenuManager:
             self.set_current_menu(node)
             self.update_last_active(self.nodes[-1])
         
+        self.update()
 
     def backward(self):
         if(len(self.nodes)<=1):
@@ -50,7 +64,7 @@ class MenuManager:
     def get_menu(self):
         return self.current.get_menu()
 
-    def delete_oldest_periodically(self, period_seconds):
+    def delete_oldest_periodically(self, threshold_seconds):
         
         oldest = max(self.nodes, key=attrgetter('last_used_at'))
         if(oldest == UiLabels.UI_LABEL_MAIN_MENU):
@@ -60,14 +74,21 @@ class MenuManager:
         
         # begin deleting if 
         if(len(self.nodes) > 2):
-            for i in range(len(self.nodes)):
-                if(self.nodes[i] == oldest):
-                    if(get_time_diff_timedelta(oldest.last_used_at, get_iso_utc_time()).seconds > period_seconds):
-                        self.nodes.pop(i)
+            for node in self.nodes[:]:
+                try: 
+                    if(node == oldest):
+                        if(get_time_diff_timedelta(oldest.last_used_at, get_iso_utc_time()).seconds > threshold_seconds):
+                            self.nodes.remove(node)
+                except:
+                    raise MenuManagerListIndexOutOfRange(f'Failed deleting node in nodes list with length {len(self.nodes)}!')
+        self.update()
+
     def update_last_active(self, node):
         for i in range(len(self.nodes)):
             if(self.nodes[i] == node):
                 self.nodes[i].last_used_at = get_iso_utc_time()
+
+        self.update()
 
     def __str__(self):
         return 'Menu Manager contains <{num_menus}> menus'.format(num_menus = len(self.nodes))

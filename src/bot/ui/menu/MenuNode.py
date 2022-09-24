@@ -1,9 +1,12 @@
 from telegram import ReplyKeyboardMarkup
+from util.constants import DbConstants
 
 from util.time_helper import get_iso_utc_time
+from bot.db.model.BaseModel import BaseModel
 
-class MenuNode:
-    def __init__(self, label: str, ui_object: ReplyKeyboardMarkup, parent = None, previous = None, next = None) -> None:
+class MenuNode(BaseModel):
+    def __init__(self, label: str, telegram_user_id: str, ui_object: ReplyKeyboardMarkup, parent = None, previous = None, next = None):  
+        super().__init__(DbConstants.TREE_MENU_NODES)
         self.label = label
         self.ui_object = ui_object
         self.parent = parent
@@ -11,6 +14,7 @@ class MenuNode:
         self.next_node = (self,next)[next != None]
         self.created_at = get_iso_utc_time()
         self.last_used_at = get_iso_utc_time()
+        self.telegram_user_id = telegram_user_id # PK
         
     def go_back(self):
         return self.previous_node
@@ -22,11 +26,16 @@ class MenuNode:
     
     def set_previous_node(self, node):
         self.previous_node = node
+        self.update()
 
     def set_next_node(self, node):
         self.next_node = node
+        self.update()
 
     def get_menu(self):
+        print(80*'-')
+        print(type(self.ui_object))
+        print(80*'-')
         return self.ui_object
 
     def __repr__(self):

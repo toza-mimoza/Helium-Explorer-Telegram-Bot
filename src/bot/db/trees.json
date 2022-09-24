@@ -5,7 +5,8 @@
         {"name": "hotspots", "description": "OOB Tree for hotspot data."},
         {"name": "activities", "description": "OOB Tree for hotspot activities."},
         {"name": "events_log", "description": "OOB Tree for logging events."},
-        {"name": "configuration", "description": "OOB Tree for bot configurations."},
+        {"name": "menu_nodes", "description": "OOB Tree for storing last menus used by the Telegram user."},
+        {"name": "menu_managers", "description": "OOB Tree for storing menu managers used by the Telegram user."},
         {"name": "bot", "description": "OOB Tree for non-critical bot data. This tree should only contain only one entry for this bot."}
     ]
 }
