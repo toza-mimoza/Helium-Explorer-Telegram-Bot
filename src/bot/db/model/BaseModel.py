@@ -1,17 +1,26 @@
+from typing import Optional
 import persistent
 from uuid import uuid4
+from bot.db.DBUtil import DBUtil
 from util.time_helper import get_iso_utc_time
-from bot.db.DBManager import DBManager
 
-from typing import Optional
 
 class BaseModel(persistent.Persistent):
-    def __init__(self, tree_name):
+    def __init__(self, tree_name, custom_uuid: Optional[str] = None):
+        
         self.active = True
-        self.uuid = uuid4()
+        self.use_custom_id = False
+        
+        if custom_uuid: 
+            self.use_custom_id = True
+            self.uuid = custom_uuid # PK
+        
+        if not self.use_custom_id:
+            self.uuid = uuid4() # PK (backup in children classes)
+        
         self.last_updated_at = get_iso_utc_time()
         self.tree_name = tree_name
-
+        
     def set_event(self, event):
         self.event = event
         
@@ -21,7 +30,10 @@ class BaseModel(persistent.Persistent):
     def __str__(self):
         return '{}-{}'.format(self.__class__.__name__, self.uuid)
     
+    def __getitem__(self, key):
+        return getattr(self, key)
+    
     def update(self):
         '''! This method updates/refreshes DB record for the object.
         '''
-        DBManager.update_record(self.tree_name, str(self.uuid), self)
+        DBUtil.update_record(self.tree_name, str(self.uuid), self)

@@ -7,8 +7,8 @@ class User(BaseModel):
     Telegram user class for the user talking to the bot
     '''
     def __init__(self, telegram_id, telegram_username: str) -> None:
-        super().__init__(DbConstants.TREE_USERS)
-        self.telegram_user_id = telegram_id
+        super().__init__(DbConstants.TREE_USERS, custom_uuid=telegram_id)
+        self.telegram_user_id = telegram_id # PK
         self.telegram_username = telegram_username
         self.last_active_at = get_iso_utc_time()
     

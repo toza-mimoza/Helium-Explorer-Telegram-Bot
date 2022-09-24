@@ -6,11 +6,11 @@ class Owner(BaseModel):
     '''
     Hotspot owner class
     '''
-    def __init__(self, helium_address, fk_user_id) -> None:
+    def __init__(self, helium_address, user_id) -> None:
         # owner id is the helium account address 
-        super().__init__(DbConstants.TREE_OWNERS)
-        self.helium_address = helium_address
-        self.telegram_user_id = fk_user_id
+        super().__init__(DbConstants.TREE_OWNERS, custom_uuid=helium_address)
+        self.helium_address = helium_address # PK
+        self.telegram_user_id = user_id
 
     def __hash__(self) -> int:
         return hash(self.helium_address, self.telegram_user_id)
