@@ -13,7 +13,9 @@ class DbConstants():
     TREE_OWNERS = 'owners'
     TREE_EVENTS_LOG = 'events_log'
     TREE_CONFIGURATION = 'configuration'
-    TREE_BOT = 'bot'
+    TREE_BOT_INSTANCE = 'bot'
+    TREE_MENU_NODES = 'menu_nodes'
+    TREE_MENU_MANAGERS = 'menu_managers'
     
 class UiLabels():
     UI_LABEL_MAIN_MENU = 'Main Menu'
