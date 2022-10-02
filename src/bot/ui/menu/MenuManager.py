@@ -1,12 +1,13 @@
 from typing import List
 from operator import attrgetter
-from bot.db.DBUtil import DBUtil
 from bot.db.model.BaseModel import BaseModel
 
 from bot.ui.menu.MenuNode import MenuNode
 from util.constants import DbConstants, UiLabels
 from util.time_helper import get_iso_utc_time, get_time_diff_timedelta
-from util.exceptions import MenuManagerListIndexOutOfRange
+
+import logging
+log = logging.getLogger(__name__)
 
 class MenuManager(BaseModel):
     def __init__(self, telegram_user_id: str) -> None:
@@ -64,8 +65,10 @@ class MenuManager(BaseModel):
     def get_menu(self):
         return self.current.get_menu()
 
-    def delete_oldest_periodically(self, threshold_seconds):
+    def delete_oldest_periodically(self, threshold_seconds=5):
         
+        did_delete = False
+
         oldest = max(self.nodes, key=attrgetter('last_used_at'))
         if(oldest == UiLabels.UI_LABEL_MAIN_MENU):
             nodes_wo_main_menu = list(self.nodes)
@@ -75,13 +78,12 @@ class MenuManager(BaseModel):
         # begin deleting if 
         if(len(self.nodes) > 2):
             for node in self.nodes[:]:
-                try: 
-                    if(node == oldest):
-                        if(get_time_diff_timedelta(oldest.last_used_at, get_iso_utc_time()).seconds > threshold_seconds):
-                            self.nodes.remove(node)
-                except:
-                    raise MenuManagerListIndexOutOfRange(f'Failed deleting node in nodes list with length {len(self.nodes)}!')
-        self.update()
+                if(node == oldest):
+                    if(get_time_diff_timedelta(oldest.last_used_at, get_iso_utc_time()).seconds > threshold_seconds):
+                        self.nodes.remove(node)
+                        log.info('Deleted oldest menu.')
+                        self.update()
+
 
     def update_last_active(self, node):
         for i in range(len(self.nodes)):
