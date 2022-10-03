@@ -25,7 +25,7 @@ def init_menu_manager_for_user(update: Update):
 
 async def ui_start(update: Update, context: ContextTypes):
     '''
-    Start bot UI action.
+    Start bot UI action. This action apart from activating bot instance it registers jobs that run repeatedly for specific user.
     '''
     telegram_user_id = update.message.from_user.id
     telegram_user_name = update.message.from_user.username
@@ -49,17 +49,18 @@ async def ui_start(update: Update, context: ContextTypes):
 
 async def ui_stop(update: Update, context: ContextTypes):
     '''
-    Stop button bot UI action.
+    Stop button bot UI action. This action deactivates the bot instance for the user, which prevents sending notifications.
+    The user record (User model; Telegram user abstraction) is deactivated. 
+    Jobs specific for the user are removed from the job queue.
     '''
-    telegram_user_id = update.message.from_user.id
+    telegram_user_id = get_telegram_user_id(update)
     # logic for deactivating bot instance for telegram user
     bot_instance = DBUtil.get_bot_for_user(telegram_user_id)
     bot_instance.active = False
-    DBUtil.update_record(DbConstants.TREE_BOT_INSTANCE,
-                         telegram_user_id, bot_instance)
-    
+    bot_instance.update()
+
     deregister_helium_jobs_for_user(telegram_user_id, context)
-    # await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    
     menu_manager = init_menu_manager_for_user(update)
     menu_manager.set_menu(build_main_menu(telegram_user_id))
     await context.bot.send_message(chat_id=update.message.chat_id,
@@ -114,3 +115,6 @@ async def ui_settings(update: Update, context: ContextTypes):
     await context.bot.send_message(chat_id=update.message.chat_id,
                                    text=UiLabels.UI_MSG_SETTINGS,
                                    reply_markup=menu_manager.get_current_menu().get_menu())
+
+def get_telegram_user_id(update):
+    return update.message.from_user.id
