@@ -18,6 +18,10 @@ class DbConstants():
     TREE_MENU_MANAGERS = 'menu_managers'
     
 class UiLabels():
+    UI_MSG_MAIN = 'Please select one of the following:'
+    UI_MSG_SNOOZE = 'Snooze Notifications Options:'
+    UI_MSG_OVERVIEW = 'Overview of your Hotspots:'
+    UI_MSG_SETTINGS = 'Bot and Account Settings:'
     UI_LABEL_MAIN_MENU = 'Main Menu'
     UI_LABEL_MENU_BACK = 'Back 🔙'
     UI_LABEL_MENU_START = 'Start Bot 🚀'
@@ -26,6 +30,20 @@ class UiLabels():
     UI_LABEL_MENU_SNOOZE = 'Snooze ⏰'
     UI_LABEL_MENU_OVERVIEW= 'Overview 📃'
     UI_LABEL_STUB = 'STUB LABEL'
+
+    UI_LABEL_SETTINGS_ACCOUNT = 'Account Settings'
+    UI_LABEL_SETTINGS_BOT = 'Bot Settings'
+    UI_LABEL_SETTINGS_NOTIFICATIONS = 'Notification Settings'
+
+    UI_LABEL_SNOOZE_ONE_HOUR= 'Snooze for 1 hour'
+    UI_LABEL_SNOOZE_SIX_HOURS = 'Snooze for 6 hours'
+    UI_LABEL_SNOOZE_UNTIL_WAKE_UP = 'Snooze until wake up'
+
+    UI_LABEL_OVERVIEW_REWARDS = 'Overview of rewards'
+    UI_LABEL_OVERVIEW_WITNESS = 'Overview of witnessed data'
+    UI_LABEL_OVERVIEW_ALL_TIME = 'All time rewards/witnesses'
+
+
 
 class MsgLabelsMD():
     '''! Formatted message labels'''
