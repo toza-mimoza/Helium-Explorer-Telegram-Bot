@@ -4,15 +4,18 @@ from telegram.ext import ContextTypes
 from .helium.actions import *
 from .ui.actions import *
 from util.constants import UiLabels
-from .ui.actions import *
 
 start_command_handler = CommandHandler('start', ui_start)
-echo_command_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
+# echo_command_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo, block=False)
 bc_stats_command_handler = CommandHandler('bc_stats', send_blockchain_stats)
 tk_supply_command_handler = CommandHandler('tk_supply', send_token_supply)
 hotspot_data_command_handler = CommandHandler('hs_data', send_hotspot_data)
 hotspot_all_activity_command_handler = CommandHandler('hs_activity_all', send_all_hotspot_activity)
 hotspot_recent_activity_command_handler = CommandHandler('hs_activity_recent', send_recent_hotspot_activity)
+
+roles_for_account_command_handler = CommandHandler('roles', send_roles_for_account)
+hotspot_activity_command_handler = CommandHandler('hs_activity', send_hotspot_activity)
+hotspot_rewards_command_handler = CommandHandler('hs_rewards', send_hotspot_rewards)
 
 async def ui_message_processor(update: Update, context: ContextTypes):
     
@@ -42,5 +45,5 @@ async def ui_message_processor(update: Update, context: ContextTypes):
         pass
     pass
 
-ui_message_handler = MessageHandler(filters.TEXT, ui_message_processor)
+ui_message_handler = MessageHandler(filters.TEXT, ui_message_processor, block=False)
 
