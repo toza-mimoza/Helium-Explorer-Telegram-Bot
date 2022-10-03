@@ -1,5 +1,5 @@
 from .BaseModel import BaseModel
-from src.util.constants import DbConstants
+from util.constants import DbConstants
 
 class EventLog(BaseModel):
     def __init__(self, event) -> None:

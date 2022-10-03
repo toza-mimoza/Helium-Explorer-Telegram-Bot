@@ -2,7 +2,7 @@ from .BaseModel import BaseModel
 from util.constants import DbConstants
 
 class BotInstance(BaseModel):
-    def __init__(self, telegram_user_id: str) -> None:
+    def __init__(self, telegram_user_id: int) -> None:
         super().__init__(DbConstants.TREE_BOT_INSTANCE, custom_uuid = telegram_user_id)
         self.telegram_user_id = telegram_user_id # PK
 
