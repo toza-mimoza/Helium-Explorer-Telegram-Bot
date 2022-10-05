@@ -26,10 +26,9 @@ def register_jobs(application: Application):
         data = {
             'telegram_user_id': user.telegram_user_id
         }
-        job_queue.run_repeating(delete_stale_menu_nodes_for_user, interval=5, first=1, data=data)
+        # job_queue.run_repeating(delete_stale_menu_nodes_for_user, interval=5, first=1, data=data)
         job_queue.run_repeating(cleanup_inactive_user, interval=60*60*24*7, first=1, data=data)
-    
-
+        
     job_queue.start()
 
 def register_helium_jobs_for_user(telegram_user_id: str, context: ContextTypes):
