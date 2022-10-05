@@ -33,9 +33,6 @@ class MenuNode(BaseModel):
         self.update()
 
     def get_menu(self):
-        print(80*'-')
-        print(type(self.ui_object))
-        print(80*'-')
         return self.ui_object
 
     def __repr__(self):

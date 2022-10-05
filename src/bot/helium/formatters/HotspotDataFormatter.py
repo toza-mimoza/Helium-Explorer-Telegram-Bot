@@ -74,9 +74,6 @@ class HotspotDataFormatter:
             {MsgLabelsMD.AVG}: {block_times['last_month']['avg']}
 '''
 
-            # print(80*'-')
-            # print(message)
-            # print(80*'-')
             return markdown_message 
         
         if(parse_mode == ParseMode.MARKDOWN_V2):
@@ -134,9 +131,6 @@ class HotspotDataFormatter:
             {MsgLabelsMD.AVG}: {escape(block_times['last_month']['avg'])}
 '''
 
-            print(80*'-')
-            print('HAPPENS HERE IN MD')
-            print(80*'-')
             return markdownv2_message 
 
         elif(parse_mode == ParseMode.HTML):
