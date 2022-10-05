@@ -4,6 +4,7 @@ from bot.db.DBConnection import DBConnection
 from bot.db.DBManager import DBManager
 
 from util.constants import DbConstants
+from util.generate_hash import get_int32_hash
 from .db import db, transaction_manager
 from typing import Any
 from zope.generations.generations import generations_key
@@ -51,11 +52,6 @@ class DBUtil:
         """
         if not DBUtil.conn:
             DBUtil.conn = db.open()
-        # print(60*'/')
-        # print(DBUtil.conn.root())
-        # print(DBUtil.conn.root()[tree_name])
-        # print(DBUtil.conn.root()[tree_name].get(1))
-        # print(60*'/')
         return DBUtil.conn.root()[tree_name].get(uuid)
 
     @staticmethod
@@ -68,7 +64,10 @@ class DBUtil:
         """
         if not DBUtil.conn:
             DBUtil.conn = db.open()
+        transaction.begin()
         DBUtil.conn.root()[tree_name].insert(uuid, object)
+        DBUtil.conn.root()[tree_name]._p_changed = 1
+        transaction.commit()
 
     @staticmethod
     def insert_or_update_record(tree_name: str, uuid: int, object: Any):
@@ -95,6 +94,7 @@ class DBUtil:
                 return 0
             else:
                 # key found and value updated
+                transaction.begin()
                 DBUtil.conn.root()[tree_name][uuid] = object
                 transaction.commit()
                 return 1
@@ -116,9 +116,12 @@ class DBUtil:
             # update record if it exists
             record = DBUtil.get_record(tree_name, uuid)
             if not record:
-                log.warn(f'Record in tree: {tree_name} with uuid: {uuid} does not exist. No error thrown because it\'s an update of a record.')            
+                log.warn(f"Record in tree [{tree_name}] with uuid [{uuid}] does not exist. No error thrown because it\'s an update of a record. Inserting record instead ...")            
+                DBUtil.insert_or_update_record(tree_name, uuid, object)
                 return 0
+            transaction.begin()
             DBUtil.conn.root()[tree_name][uuid] = object
+            DBUtil.conn.root()[tree_name]._p_changed = 1
             transaction.commit()
             return 1
         else:
@@ -134,6 +137,7 @@ class DBUtil:
         @return None
         """
 
+        transaction.begin()
         DBUtil.conn.root()[tree_name].get(uuid).active = False
         transaction.commit()
 
@@ -168,6 +172,7 @@ class DBUtil:
     def get_account_address_from_telegram_user_id(telegram_user_id: int):
         """! Returns account_address string of the Telegram user if the user is an owner else it returns None."""
         owner = DBUtil.get_owner(telegram_user_id)
+
         if not owner:
             return None
         return owner.get_account_address()
@@ -244,7 +249,7 @@ class DBUtil:
     @staticmethod
     def get_owner_by_telegram_id(telegram_user_id: int):
         """! Get owner record by specifying Telegram user ID."""
-        return DBUtil.get_all(DbConstants.TREE_OWNERS, telegram_user_id=telegram_user_id)
+        return DBUtil.get_all(DbConstants.TREE_OWNERS, telegram_user_id=telegram_user_id)[0]
 
     @staticmethod
     def get_bots():
@@ -308,8 +313,31 @@ class DBUtil:
         return True if DBUtil.conn.root()[tree_name].get(uuid) else False
 
     @staticmethod
+    def is_user_registered(telegram_user_id: str):
+        """! Check if user has registered an account with the bot.
+        An account includes giving Helium account address and the bot will automatically assign jobs and notifications for registered hotspots.
+        """
+        if not DBUtil.exists_user(telegram_user_id):
+            return False
+        
+        user = DBUtil.get_record(DbConstants.TREE_USERS, telegram_user_id)
+        if user:
+            return user.is_registered
+        else:
+            log.warn(f'User is not found while checking if registered!')
+            return False
+
+    @staticmethod
     def exists_hotspot(hotspot_address: str):
         query = DBUtil.get_all(DbConstants.TREE_HOTSPOTS, hotspot_address=hotspot_address)
+        if len(query)==0:
+            return False
+        else:
+            return True
+
+    @staticmethod
+    def exists_user(telegram_user_id: str):
+        query = DBUtil.get_all(DbConstants.TREE_USERS, telegram_user_id=telegram_user_id)
         if len(query)==0:
             return False
         else:
