@@ -196,23 +196,30 @@ async def update_roles_for_account_data(update: Update, context: ContextTypes):
     passed_checks = await _check_preconditions_owner(account_address, mode, update, context, silent=True)
     if not passed_checks:
         return
-    responses = RequestHandler.get_account_roles(account_address, limit=10)
-
-
-
+    responses = await RequestHandler.get_account_roles(account_address, limit=10)
 
 async def update_hotspot_data(hotspot_address: str, telegram_user_id: int, context: ContextTypes):
-#   - gets from Telegram user id an owner
-#   - if the owner has hotspots then proceed
-#       - else abort
-#   - for each hotspot 
-#       - update activity data if changed (insert new activities)
     mode = ParseMode.MARKDOWN
     account_address = DBUtil.get_account_address_from_telegram_user_id(telegram_user_id)
+    
+    if not account_address:
+        raise Exception('Account address not found or owner does not exist')
+        
     passed_checks = await _check_preconditions_owner(account_address, mode=mode, update=None, context=context)
     if not passed_checks:
         return
-    response = RequestHandler.get_hotspot_data(hotspot_address, limit=10)
+    response = await RequestHandler.get_hotspot_data(hotspot_address)
 
-    updated_hotspot = Hotspot(hotspot_address, animal_name=response['name'], account_address=response['owner'], status_online=response['status']['online'])
-    updated_hotspot.update()
+    if not 'error' in response:
+        updated_hotspot = Hotspot(hotspot_address, animal_name=response['name'], account_address=response['owner'], status_online=response['status']['online'])
+        updated_hotspot.update()
+
+async def insert_hotspots_for_owner(account_address: str, telegram_user_id: int, context: ContextTypes):
+
+    response = await RequestHandler.get_hotspots_for_account(account_address)
+
+    if response:
+        for hotspot in response:
+            hs = Hotspot(hotspot['address'], hotspot['name'], hotspot['owner'], hotspot['status']['online'])
+            hs.update()
+            log.info(f"Inserted/updated hotspot {hotspot['name']} into DB.")
