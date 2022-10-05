@@ -32,7 +32,6 @@ from bot.db.DBUtil import DBUtil
 
 from bot.db.db_events import DatabaseOpenedEventStub
 from bot.handlers import *
-from bot.jobs.jobs import delete_stale_menu_nodes_for_user
 from util.read_secrets import read_secrets
 from bot.db.DBUpgradeSchemaManager import DBUpgradeSchemaManager
 
@@ -50,9 +49,19 @@ def init_bot():
     application = ApplicationBuilder().token(SECRETS['BOT_TOKEN']).concurrent_updates(True).build()
     application.add_handlers(
         handlers=(
+
+            # conversation handler
+            setup_conv_handler,
+
+            # message handlers
+            ui_message_handler,
+
             # command handlers
             start_command_handler, 
+            # setup_start_command_handler,
             # echo_command_handler,
+            background_script_command,
+
             bc_stats_command_handler,
             tk_supply_command_handler,
             hotspot_data_command_handler,
@@ -62,8 +71,6 @@ def init_bot():
             hotspot_activity_command_handler,
             hotspot_rewards_command_handler,
             
-            # message handlers
-            ui_message_handler,
         )
     )
 

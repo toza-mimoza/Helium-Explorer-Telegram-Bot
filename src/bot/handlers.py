@@ -1,11 +1,20 @@
-from telegram.ext import filters, CommandHandler, MessageHandler
+from telegram.ext import filters, CommandHandler, MessageHandler, ConversationHandler
 from telegram.ext import ContextTypes
+
+from bot.actions import bg_sc, setup_input, setup_end, setup_start
+from bot.actions import INPUT
+from util.message_filters.UIMessageFilter import UI
 
 from .helium.actions import *
 from .ui.actions import *
 from util.constants import UiLabels
+from util import address_regex
+
 
 start_command_handler = CommandHandler('start', ui_start)
+setup_start_command_handler = CommandHandler('setup_start', ui_setup)
+background_script_command = CommandHandler('bg', bg_sc)
+
 # echo_command_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo, block=False)
 bc_stats_command_handler = CommandHandler('bc_stats', send_blockchain_stats)
 tk_supply_command_handler = CommandHandler('tk_supply', send_token_supply)
@@ -26,24 +35,39 @@ async def ui_message_processor(update: Update, context: ContextTypes):
     elif UiLabels.UI_LABEL_MENU_STOP in received:
         # end invoked 
         await ui_stop(update, context)
-        pass
     elif UiLabels.UI_LABEL_MENU_BACK in received:
         # end invoked 
         await ui_back(update, context)
-        pass
     elif UiLabels.UI_LABEL_MENU_OVERVIEW in received:
         # end invoked 
         await ui_overview(update, context)
-        pass
     elif UiLabels.UI_LABEL_MENU_SNOOZE in received:
         # snooze options
         await ui_snooze(update, context)
-        pass
     elif UiLabels.UI_LABEL_MENU_SETTINGS in received:
         # settings main menu 
         await ui_settings(update, context)
-        pass
-    pass
+    else:
+        await update.message.reply_text(
+            "It seems that something went wrong. "
+            "Please retry your input.",
+            )
 
-ui_message_handler = MessageHandler(filters.TEXT, ui_message_processor, block=False)
+ui_message_handler = MessageHandler(
+    UI, # custom filter for UI messages/buttons 
+    ui_message_processor, 
+    block=False
+    )
 
+setup_conv_handler = ConversationHandler(
+    entry_points=[MessageHandler(filters.Regex(UiLabels.UI_LABEL_MENU_SETUP), setup_start)],
+    states={
+        INPUT: [
+            MessageHandler(
+                filters.TEXT, 
+                setup_input
+            )
+        ],
+    },
+    fallbacks=[CommandHandler("cancel", setup_end)],
+)

@@ -29,6 +29,7 @@ class UiLabels():
     UI_LABEL_MENU_SETTINGS = 'Settings ⚙'
     UI_LABEL_MENU_SNOOZE = 'Snooze ⏰'
     UI_LABEL_MENU_OVERVIEW= 'Overview 📃'
+    UI_LABEL_MENU_SETUP = 'Setup bot 🤖'
     UI_LABEL_STUB = 'STUB LABEL'
 
     UI_LABEL_SETTINGS_ACCOUNT = 'Account Settings'

@@ -4,6 +4,10 @@ from bot.ui.menu.MenuNode import MenuNode
 from util.constants import UiLabels
 from .keyboards import *
 def build_main_menu(telegram_user_id):
+    if not DBUtil.is_user_registered(telegram_user_id):
+        keyboard = main_menu_keyboard_var_setup
+        return MenuNode(label='', telegram_user_id=telegram_user_id, ui_object=keyboard, previous=None)
+
     if DBUtil.is_bot_active(telegram_user_id):
         keyboard = main_menu_keyboard_var_stop
     else:

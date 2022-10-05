@@ -1,5 +1,11 @@
 from telegram import ReplyKeyboardMarkup
 from .buttons import *
+kb_main_menu_var_setup = [
+    [btn_setup, btn_overview],
+    [btn_snooze, btn_settings]
+    ]
+
+main_menu_keyboard_var_setup = ReplyKeyboardMarkup(kb_main_menu_var_setup)
 
 kb_main_menu_var_start = [
     [btn_start, btn_overview],

@@ -2,6 +2,7 @@ from telegram import KeyboardButton
 from util.constants import UiLabels
 
 # first level - Main Menu
+btn_setup = KeyboardButton(UiLabels.UI_LABEL_MENU_SETUP)
 btn_start = KeyboardButton(UiLabels.UI_LABEL_MENU_START)
 btn_stop = KeyboardButton(UiLabels.UI_LABEL_MENU_STOP)
 btn_end = KeyboardButton(UiLabels.UI_LABEL_MENU_BACK)
