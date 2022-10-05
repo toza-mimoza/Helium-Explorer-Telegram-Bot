@@ -24,7 +24,7 @@ async def update_hotspots(context: ContextTypes.DEFAULT_TYPE):
         return
 
     for hotspot in hotspots:
-        await update_hotspot_data(hotspot.hotspot_address, context)
+        await update_hotspot_data(hotspot.hotspot_address, telegram_user_id, context)
 
     # TO-DO
     log.info(f'Executed job update_hotspots for user {telegram_user_id}')
