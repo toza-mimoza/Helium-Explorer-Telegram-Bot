@@ -11,6 +11,7 @@ class User(BaseModel):
         self.telegram_user_id = telegram_id # PK
         self.telegram_username = telegram_username
         self.last_active_at = get_iso_utc_time()
+        self.is_registered: bool = False
     
     def __hash__(self) -> int:
         return hash(self.telegram_user_id, self.telegram_username)
