@@ -52,7 +52,12 @@ class RequestHandler:
         route = f'hotspots/{hotspot_address}/rewards'
         responses = await RequestHandler.get_helium_request(route, use_limit = False, use_cursor=True, filter_types=None, min_time=min_time, max_time=max_time, limit=limit)
         return responses
-        
+
+    async def get_hotspots_for_account(account_address, min_time=None, max_time=None, limit=10):
+        route = f'accounts/{account_address}/hotspots'
+        responses = await RequestHandler.get_helium_request(route, use_limit = False, use_cursor=False, filter_types=None, min_time=min_time, max_time=max_time, limit=limit)
+        return responses
+
     async def get_hotspot_roles(hotspot_address, cursor_depth=5, filter_types=None, min_time=None, max_time=None, limit=10):
         route = f'hotspots/{hotspot_address}/roles'
         responses = await RequestHandler.get_helium_request(route=route, use_limit=True, use_cursor=True, cursor_depth=cursor_depth, filter_types=filter_types, min_time=min_time, max_time=max_time, limit=limit)
@@ -89,14 +94,27 @@ class RequestHandler:
             response = await RequestHandler.get(api_version='v1', res=route, params=params)
             response=response['data']
 
+        if not use_cursor:
+            log.info(f'''************************************
+            Sent request to Helium API:
+            Route: /{route}
+
+            Params: {params}
+
+            Response: {response}
+            ***************************************
+            ''')
+
+            return response
+        
         log.info(f'''************************************
         Sent request to Helium API:
         Route: /{route}
 
         Params: {params}
+
+        Responses: {responses}
         ***************************************
         ''')
 
-        if not use_cursor:
-            return response
         return responses
