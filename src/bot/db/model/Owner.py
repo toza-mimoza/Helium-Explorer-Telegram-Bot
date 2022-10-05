@@ -1,6 +1,6 @@
 from typing import List
 
-from util import get_int64_hash
+from util import get_int32_hash
 from .BaseModel import BaseModel
 from util.constants import DbConstants
 
@@ -10,7 +10,7 @@ class Owner(BaseModel):
     '''
     def __init__(self, account_address, telegram_user_id) -> None:
         # owner id is the helium account address 
-        super().__init__(DbConstants.TREE_OWNERS, custom_uuid=get_int64_hash(account_address))
+        super().__init__(DbConstants.TREE_OWNERS, custom_uuid=get_int32_hash(account_address))
         self.account_address = account_address # PK
         self.telegram_user_id = telegram_user_id
 
