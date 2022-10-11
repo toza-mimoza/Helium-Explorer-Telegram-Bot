@@ -3,97 +3,73 @@ from operator import attrgetter
 from bot.db.model.BaseModel import BaseModel
 
 from bot.ui.menu.MenuNode import MenuNode
+from bot.ui.template.menus import build_main_menu
 from util.constants import DbConstants, UiLabels
 from util.time_helper import get_iso_utc_time, get_time_diff_timedelta
 
 import logging
 log = logging.getLogger(__name__)
+from persistent.list import PersistentList
+from persistent.dict import PersistentDict
 
 class MenuManager(BaseModel):
     def __init__(self, telegram_user_id: str) -> None:
-        super().__init__(DbConstants.TREE_MENU_NODES, custom_uuid=telegram_user_id)
-        self.nodes: List[MenuNode] = []
+        super().__init__(DbConstants.TREE_MENU_MANAGERS, custom_uuid=telegram_user_id)
+        self.nodes: PersistentList[MenuNode] = PersistentList()
         self.current: MenuNode = None
         self.telegram_user_id = telegram_user_id
-        
-    def set_menu_nodes(self, nodes):
-        """! Sets MenuNode list for the manager."""
-        self.nodes = nodes
-        self.update()
+        self.menu_order = -1
+        self.menu_mapping: PersistentDict = PersistentDict()
 
     def set_current_menu(self, menu: MenuNode):
         self.current = menu
-        self.update()
     
     def get_current_menu(self) -> MenuNode:
         return self.current
 
     def set_menu(self, node: MenuNode):
-        found = False
-        for i in range(len(self.nodes)):
-            if(self.nodes[i] == node):
-                found = True
-                if(len(self.nodes)>0):
-                    self.nodes[i].set_previous_node(self.nodes[-1])
-                    self.nodes[-1].set_next_node(self.nodes[i])
-                self.set_current_menu(self.nodes[i])
-                self.update_last_active(self.nodes[i])
-                 
-        if not found:
-            if(len(self.nodes)>0):
-                node.set_previous_node(self.nodes[-1])
-                self.nodes[-1].set_next_node(node)
-            self.nodes.append(node)
-            self.set_current_menu(node)
-            self.update_last_active(self.nodes[-1])
+        self.menu_order += 1
+
+        # update last active field of new menu
+        node.last_used_at = get_iso_utc_time()
+        node.set_menu_order(self.menu_order)
+
+        # store menu with menu_order
+        self.menu_mapping[self.menu_order] = node
         
-        self.update()
+        last = max(self.menu_mapping.keys())
+
+        if len(self.menu_mapping) >= 2: 
+            self.menu_mapping[last].previous_node = self.menu_mapping[last - 1]
+            self.menu_mapping[last - 1].next_node = self.menu_mapping[last]
+
+        # set current menu to that menu
+        self.set_current_menu(self.menu_mapping[last])
 
     def backward(self):
-        if(len(self.nodes)<=1):
+        if len(self.menu_mapping)==0:
+            # fallback to main menu
+            log.info(f'Fallback to Main Menu via back button.')
+            return build_main_menu(self.telegram_user_id)
+        elif len(self.menu_mapping) == 1:
             return self.current
-        last = self.nodes[-1]
-        new = self.nodes[-1].go_back()
+        else:
+            self.menu_mapping[self.menu_order - 1].previous_node = self.menu_mapping[self.menu_order]
+            self.menu_mapping[self.menu_order].next_node = self.menu_mapping[self.menu_order - 1]
+            
+            self.set_current_menu(self.menu_mapping[self.menu_order - 1])
 
-        self.nodes[-1] = new
-        self.nodes[-2] = last
+            return self.current
 
-        self.set_current_menu(self.nodes[-1])
-
-        return self.current
-    
     def get_menu(self):
         return self.current.get_menu()
 
     def delete_oldest_periodically(self, threshold_seconds=5):
-        
-        did_delete = False
-
-        oldest = max(self.nodes, key=attrgetter('last_used_at'))
-        if(oldest == UiLabels.UI_LABEL_MAIN_MENU):
-            nodes_wo_main_menu = list(self.nodes)
-            nodes_wo_main_menu.remove(oldest)
-            oldest = max(nodes_wo_main_menu, key=attrgetter('last_used_at'))
-        
-        # begin deleting if 
-        if(len(self.nodes) > 2):
-            for node in self.nodes[:]:
-                if(node == oldest):
-                    if(get_time_diff_timedelta(oldest.last_used_at, get_iso_utc_time()).seconds > threshold_seconds):
-                        self.nodes.remove(node)
-                        log.info('Deleted oldest menu.')
-                        self.update()
-
-
-    def update_last_active(self, node):
-        for i in range(len(self.nodes)):
-            if(self.nodes[i] == node):
-                self.nodes[i].last_used_at = get_iso_utc_time()
-
-        self.update()
+        # To Do
+        pass
 
     def __str__(self):
-        return 'Menu Manager contains <{num_menus}> menus'.format(num_menus = len(self.nodes))
+        return 'Menu Manager contains <{num_menus}> menus'.format(num_menus = len(self.menu_mapping))
     
     def __repr__(self):
         return self.__str__
