@@ -1,8 +1,9 @@
 from telegram.ext import filters, CommandHandler, MessageHandler, ConversationHandler
 from telegram.ext import ContextTypes
 
-from bot.actions import bg_sc, setup_input, setup_end, setup_start
-from bot.actions import INPUT
+from bot.actions import bg_sc
+from bot.setup_actions import setup_input, setup_end, setup_start
+from bot.setup_actions import INPUT
 from util.message_filters.UIMessageFilter import UI
 
 from .helium.actions import *
@@ -47,11 +48,10 @@ async def ui_message_processor(update: Update, context: ContextTypes):
     elif UiLabels.UI_LABEL_MENU_SETTINGS in received:
         # settings main menu 
         await ui_settings(update, context)
-    else:
-        await update.message.reply_text(
-            "It seems that something went wrong. "
-            "Please retry your input.",
-            )
+    # else:
+    #     msg = "It seems that something went wrong. Please retry your input."
+    #     await send_html_message(msg, update, context)
+
 
 ui_message_handler = MessageHandler(
     UI, # custom filter for UI messages/buttons 
@@ -64,10 +64,11 @@ setup_conv_handler = ConversationHandler(
     states={
         INPUT: [
             MessageHandler(
-                filters.TEXT, 
+                filters.Regex(address_regex) & (~filters.COMMAND), 
                 setup_input
             )
         ],
     },
     fallbacks=[CommandHandler("cancel", setup_end)],
+    # allow_reentry=True,
 )

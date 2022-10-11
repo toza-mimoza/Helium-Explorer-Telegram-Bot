@@ -48,16 +48,16 @@ def init_bot():
     """
     application = ApplicationBuilder().token(SECRETS['BOT_TOKEN']).concurrent_updates(True).build()
     application.add_handlers(
-        handlers=(
+        handlers={
 
             # conversation handler
-            setup_conv_handler,
+            1: [setup_conv_handler],
 
             # message handlers
-            ui_message_handler,
+            2: [ui_message_handler],
 
             # command handlers
-            start_command_handler, 
+            3: [start_command_handler, 
             # setup_start_command_handler,
             # echo_command_handler,
             background_script_command,
@@ -69,9 +69,9 @@ def init_bot():
             hotspot_recent_activity_command_handler,
             roles_for_account_command_handler,
             hotspot_activity_command_handler,
-            hotspot_rewards_command_handler,
+            hotspot_rewards_command_handler],
             
-        )
+        }
     )
 
     return application
@@ -87,4 +87,3 @@ def register_db_schema_manager():
     provideUtility(db_schema_manager, ISchemaManager, name=DbConstants.DB_APP_NAME)
     evolveMinimumSubscriber(DatabaseOpenedEventStub(DBUtil.get_db_ref()))
     return db_schema_manager
-

@@ -5,7 +5,10 @@ from telegram.ext import ContextTypes
 from bot.helium.RequestHandler import *
 from bot.db.DBUtil import DBUtil
 from bot.db.model import Activity, User, Owner, Hotspot
+from bot.message_actions import send_html_message, send_mdv2_message, send_message
 from util.constants import DbConstants
+from util import hr_hotspot_name
+from util.formatter_helper import _bit
 from util.time_helper import get_days_ago_time_str, get_iso_utc_time
 
 import logging
@@ -55,6 +58,7 @@ async def _check_preconditions_owner(account_address, mode: ParseMode, update: U
             msg = "You haven't added any hotspots or you are not an owner. Send '/start' and follow the instructions there."    
             await update.message.reply_text(text=msg, parse_mode=mode)
         return False
+        
     if len(hotspots) > 1:
         if not context.args:
             if not silent and update:
@@ -97,35 +101,41 @@ async def send_blockchain_stats(update: Update, context: ContextTypes):
     telegram_user_id = update.message.from_user.id
     mode = ParseMode.HTML
     response = BCStatsFormatter.get_message(await RequestHandler.get_bc_stats(), parse_mode=mode)
-    await update.message.reply_text(text=response, parse_mode=mode)
+   
+    await send_html_message(response, update, context)
 
 async def send_token_supply(update: Update, context: ContextTypes):
     '''! Get and send current token supply
     '''
     mode = ParseMode.HTML
     response = TokenSupplyFormatter.get_message(await RequestHandler.get_token_supply(), parse_mode=mode)
-    await update.message.reply_text(text=response, parse_mode=mode)
+    
+    await send_html_message(response, update, context)
 
 async def send_hotspot_data(update: Update, context: ContextTypes):
     '''! Get and send hotspot data
     '''
     mode = ParseMode.HTML
     response = HotspotDataFormatter.get_message(await RequestHandler.get_hotspot_data(), parse_mode=mode)
-    await update.message.reply_text(text=response, parse_mode=mode)
+    
+    await send_html_message(response, update, context)
 
 async def send_all_hotspot_activity(update: Update, context: ContextTypes):
     '''! Get and send hotspot all time activity 
     '''
     mode = ParseMode.HTML
     response = HotspotActivityFormatter.get_message(await RequestHandler.get_hotspot_activity(), parse_mode=mode)
-    await update.message.reply_text(text=response, parse_mode=mode)
+    
+    await send_html_message(response, update, context)
 
 async def send_recent_hotspot_activity(update: Update, context: ContextTypes):
     '''! Get and send recent 24h hotspot activity
     '''
     mode = ParseMode.HTML
-    response = HotspotActivityFormatter.get_message(await RequestHandler.get_hotspot_activity(), parse_mode=mode)
-    await update.message.reply_text(text=response, parse_mode=mode)
+    response = HotspotActivityFormatter.get_message(await RequestHandler.get_hotspot_roles(), parse_mode=mode)
+    
+    msg = response
+    await send_html_message(msg, update, context)
 
 async def send_roles_for_account(update: Update, context: ContextTypes):
     '''! Send 10 recent roles for Helium account address. 
@@ -141,7 +151,7 @@ async def send_roles_for_account(update: Update, context: ContextTypes):
     responses = await RequestHandler.get_account_roles(account_address)
     
     msg = ''
-    await update.message.reply_text(text=msg, parse_mode=None)
+    await send_message(msg, update, context)
 
 async def send_hotspot_activity(update: Update, context: ContextTypes):
     """! Send ten recent hotspot activity to the user."""
@@ -174,6 +184,9 @@ async def send_hotspot_activity(update: Update, context: ContextTypes):
             
             activity = Activity(hash_value=activity_hash, account_address=account_address, hotspot_address=hotspot_address, activity_type=activity_type, time=activity_time, role=activity_role, height=activity_bc_height)
             activity.update()
+    
+    msg ='TO-DO'
+    await send_message(msg, update, context)
 
 async def send_hotspot_rewards(update: Update, context: ContextTypes):
     """! Send ten recent days of hotspot rewards to the user."""
@@ -181,7 +194,8 @@ async def send_hotspot_rewards(update: Update, context: ContextTypes):
     ten_days_ago = get_days_ago_time_str(10)
     response = await RequestHandler.get_hotspot_rewards('1125H4Afvw7TtscVw8xq8ZQ3XFDSFezfurqfy4VYetaw6GpdgbpH', min_time=ten_days_ago, max_time=get_iso_utc_time())
 
-    await update.message.reply_text(text=response, parse_mode=None)
+    msg = response
+    await send_message(msg, update, context)
     
 #######################################################
 #
@@ -214,12 +228,21 @@ async def update_hotspot_data(hotspot_address: str, telegram_user_id: int, conte
         updated_hotspot = Hotspot(hotspot_address, animal_name=response['name'], account_address=response['owner'], status_online=response['status']['online'])
         updated_hotspot.update()
 
-async def insert_hotspots_for_owner(account_address: str, telegram_user_id: int, context: ContextTypes):
+async def insert_hotspots_for_owner(account_address: str, telegram_user_id: int, update: Update, context: ContextTypes):
 
     response = await RequestHandler.get_hotspots_for_account(account_address)
+
+    msg = '''Following hotspots are registered for monitoring:
+
+    '''
 
     if response:
         for hotspot in response:
             hs = Hotspot(hotspot['address'], hotspot['name'], hotspot['owner'], hotspot['status']['online'])
             hs.update()
             log.info(f"Inserted/updated hotspot {hotspot['name']} into DB.")
+            
+            msg = msg + _bit(hr_hotspot_name(hotspot['name'])) + '\n'
+
+        await send_mdv2_message(msg, update, context)
+        
