@@ -13,7 +13,7 @@ class DbConstants():
     TREE_OWNERS = 'owners'
     TREE_EVENTS_LOG = 'events_log'
     TREE_CONFIGURATION = 'configuration'
-    TREE_BOT_INSTANCE = 'bot'
+    TREE_BOT_INSTANCE = 'bot_instances'
     TREE_MENU_NODES = 'menu_nodes'
     TREE_MENU_MANAGERS = 'menu_managers'
     
