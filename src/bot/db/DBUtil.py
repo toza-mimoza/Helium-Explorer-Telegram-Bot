@@ -64,9 +64,8 @@ class DBUtil:
         """
         if not DBUtil.conn:
             DBUtil.conn = db.open()
-        transaction.begin()
+        # transaction.begin()
         DBUtil.conn.root()[tree_name].insert(uuid, object)
-        DBUtil.conn.root()[tree_name]._p_changed = 1
         transaction.commit()
 
     @staticmethod
@@ -94,7 +93,6 @@ class DBUtil:
                 return 0
             else:
                 # key found and value updated
-                transaction.begin()
                 DBUtil.conn.root()[tree_name][uuid] = object
                 transaction.commit()
                 return 1
@@ -119,10 +117,11 @@ class DBUtil:
                 log.warn(f"Record in tree [{tree_name}] with uuid [{uuid}] does not exist. No error thrown because it\'s an update of a record. Inserting record instead ...")            
                 DBUtil.insert_or_update_record(tree_name, uuid, object)
                 return 0
-            transaction.begin()
+            
             DBUtil.conn.root()[tree_name][uuid] = object
-            DBUtil.conn.root()[tree_name]._p_changed = 1
             transaction.commit()
+
+            log.info(f"Updating object: {object} uuid: {uuid} in tree {tree_name}")
             return 1
         else:
             log.warn(
@@ -137,7 +136,6 @@ class DBUtil:
         @return None
         """
 
-        transaction.begin()
         DBUtil.conn.root()[tree_name].get(uuid).active = False
         transaction.commit()
 
@@ -240,11 +238,8 @@ class DBUtil:
         """! Get menu manager for specific user.
         @return all MenuNode type objects
         """
-        query = DBUtil.get_all(
-            DbConstants.TREE_MENU_MANAGERS, telegram_user_id=telegram_user_id)
-        if len(query) == 0:
-            return None
-        return query[0]
+        query = DBUtil.get_record(DbConstants.TREE_MENU_MANAGERS, telegram_user_id)
+        return query
 
     @staticmethod
     def get_owner_by_telegram_id(telegram_user_id: int):
@@ -261,11 +256,8 @@ class DBUtil:
     @staticmethod
     def get_bot_for_user(telegram_user_id: int):
         """! Returns Bot type object. """
-        query = DBUtil.get_all(DbConstants.TREE_BOT_INSTANCE,
-                               telegram_user_id=telegram_user_id)
-        if len(query) == 0:
-            return None
-        return query[0]
+        query = DBUtil.get_record(DbConstants.TREE_BOT_INSTANCE, telegram_user_id)
+        return query
 
     @staticmethod
     def is_bot_active(telegram_user_id: int) -> bool:
@@ -293,8 +285,7 @@ class DBUtil:
         instance = DBUtil.get_bot_for_user(telegram_user_id)
         if instance:
             instance.active = True
-            DBUtil.insert_or_update_record(
-                tree_name=DbConstants.TREE_BOT_INSTANCE, uuid=int(instance.uuid), object=instance)
+            DBUtil.insert_or_update_record(DbConstants.TREE_BOT_INSTANCE, telegram_user_id, instance)
         else:
             log.warn(
                 f'BotInstance for telegram_user_id {telegram_user_id} was not found while activating!')
@@ -313,7 +304,7 @@ class DBUtil:
         return True if DBUtil.conn.root()[tree_name].get(uuid) else False
 
     @staticmethod
-    def is_user_registered(telegram_user_id: str):
+    def is_user_registered(telegram_user_id: str) -> bool:
         """! Check if user has registered an account with the bot.
         An account includes giving Helium account address and the bot will automatically assign jobs and notifications for registered hotspots.
         """
@@ -342,3 +333,18 @@ class DBUtil:
             return False
         else:
             return True
+
+    @staticmethod
+    def get_stats():
+        """! Display for each tree the number of records. """
+        import os, json
+        from .db import __location__
+        with open(os.path.join(__location__, 'trees.json'), 'r') as f:
+            trees = json.load(f)
+        # loop through tree names in json and create OOBTrees for each of them
+        if not DBUtil.conn:
+            DBUtil.conn = DBUtil.get_db_ref().open()
+        for tree in trees['trees']: 
+            msg = f"{tree['name']} contains {len(DBUtil.conn.root()[tree['name']])} objects."
+            log.info(msg)
+            print(msg)
