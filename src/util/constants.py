@@ -1,4 +1,4 @@
-from .formatter_helper import _bit
+from .formatter_helper import _b, _bit, escape
 from telegram.constants import ParseMode
 
 class EventConstants():
@@ -73,11 +73,18 @@ class MsgLabelsMD():
     ACTIVE = _bit('Active')
     STDDEV = _bit('Std dev')
     AVG = _bit('Average')
-    
+
     COINGECKO_PRICE_GBP = _bit('Coingecko price GBP')
     COINGECKO_PRICE_USD = _bit('Coingecko price USD')
     COINGECKO_PRICE_EUR = _bit('Coingecko price EUR')
 
+    TYPE = _bit('Type')
+    ROLE = _bit('Role')
+    HEIGHT = _bit('Height')
+    TIME = _bit(escape('Time (UTC)'))
+
+    SEPARATOR = '---'
+    
 class MsgLabelsHTML():
     '''! Formatted message labels'''
     TOKEN_SUPPLY = _bit('Token supply', ParseMode.HTML)
@@ -109,3 +116,10 @@ class MsgLabelsHTML():
     COINGECKO_PRICE_GBP = _bit('Coingecko price GBP', ParseMode.HTML)
     COINGECKO_PRICE_USD = _bit('Coingecko price USD', ParseMode.HTML)
     COINGECKO_PRICE_EUR = _bit('Coingecko price EUR', ParseMode.HTML)
+
+    TYPE = _bit('Type', ParseMode.HTML)
+    ROLE = _bit('Role', ParseMode.HTML)
+    HEIGHT = _bit('Height', ParseMode.HTML)
+    TIME = _bit('Time (UTC)', ParseMode.HTML)
+
+    SEPARATOR = '<hr>'

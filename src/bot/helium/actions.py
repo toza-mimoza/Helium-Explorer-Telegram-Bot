@@ -8,7 +8,7 @@ from bot.db.model import Activity, User, Owner, Hotspot
 from bot.message_actions import send_html_message, send_mdv2_message, send_message
 from util.constants import DbConstants
 from util import hr_hotspot_name
-from util.formatter_helper import _bit
+from util.formatter_helper import _b, _bit, escape
 from util.time_helper import get_days_ago_time_str, get_iso_utc_time
 
 import logging
@@ -154,7 +154,7 @@ async def send_roles_for_account(update: Update, context: ContextTypes):
     await send_message(msg, update, context)
 
 async def send_hotspot_activity(update: Update, context: ContextTypes):
-    """! Send ten recent hotspot activity to the user."""
+    """! Send ten recent hotspot activities/roles to the user."""
     telegram_user_id = _get_telegram_user_id(update)
     mode = ParseMode.MARKDOWN
     # account address is owner unique id / Helium account address
@@ -174,19 +174,14 @@ async def send_hotspot_activity(update: Update, context: ContextTypes):
         hotspot_address = hotspots[0].hotspot_address
         
     responses = await RequestHandler.get_hotspot_roles(hotspot_address)
+    
+    msg = _b('Last 10 hotspot activities: ') + '\n'
     for response in responses:
         for activity in response:
-            activity_type = activity['type']
-            activity_time = activity['time']
-            activity_role = activity['role']
-            activity_bc_height = activity['height']
-            activity_hash = activity['hash']
-            
-            activity = Activity(hash_value=activity_hash, account_address=account_address, hotspot_address=hotspot_address, activity_type=activity_type, time=activity_time, role=activity_role, height=activity_bc_height)
-            activity.update()
-    
-    msg ='TO-DO'
-    await send_message(msg, update, context)
+            act = Activity(hash_value=activity['hash'], account_address=account_address, hotspot_address=hotspot_address, activity_type=activity['type'], time=activity['time'], role=activity['role'], height=activity['height'])
+            act.update()
+            msg += HotspotActivityFormatter.get_message(activity, parse_mode=ParseMode.MARKDOWN) + '\n'
+    await send_mdv2_message(msg, update, context)
 
 async def send_hotspot_rewards(update: Update, context: ContextTypes):
     """! Send ten recent days of hotspot rewards to the user."""

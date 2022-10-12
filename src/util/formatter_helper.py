@@ -42,4 +42,4 @@ def _ul(text, parse_mode = ParseMode.MARKDOWN):
         
 
 def escape(text):
-    return str(text).replace(".", "\.").replace("_", "\\_").replace("*", "\\*").replace("[", "\\[").replace("`", "\\`")
+    return str(text).replace(".", "\.").replace("_", "\\_").replace("*", "\\*").replace("[", "\\[").replace("`", "\\`").replace('-', '\\-').replace('(', '\\(').replace(')', '\\)')

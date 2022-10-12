@@ -3,35 +3,27 @@ from telegram.constants import ParseMode
 from util.exceptions import InvalidParseMode
 from util.formatter_helper import _ul, escape
 from util.constants import MsgLabelsMD, MsgLabelsHTML
-
+from util.time_helper import get_iso_utc_time_from_posix
 class HotspotActivityFormatter:
     
     def get_message(data, parse_mode = ParseMode.MARKDOWN):
-        # format the message here
-        token_supply = data['token_supply']
-        title_md=_ul('Hotspot Activities')         
-        title_html = _ul('Blockchain statistics', ParseMode.HTML)
-
-        if(parse_mode == ParseMode.MARKDOWN):
-
-            # format the message here
-            markdown_message = f'''{title_md}
-    {MsgLabelsMD.TOKEN_SUPPLY}: {token_supply}
+        """! Returns formatted single activity as message in either MD, MDv2 or HTML."""
+        if(parse_mode == ParseMode.MARKDOWN or parse_mode == ParseMode.MARKDOWN_V2):
+            markdown_message = f'''
+    {MsgLabelsMD.TYPE}: {data['type']}
+    {MsgLabelsMD.ROLE}: {data['role']}
+    {MsgLabelsMD.HEIGHT}: {data['height']}
+    {MsgLabelsMD.TIME}: {escape(get_iso_utc_time_from_posix(data['time']))}
     '''
-            return markdown_message 
-        
-        if(parse_mode == ParseMode.MARKDOWN_V2):
-            # format the message here
-            
-            markdownv2_message = f'''{title_md}
-    {MsgLabelsMD.TOKEN_SUPPLY}: {escape(token_supply)}
-    '''
-            return markdownv2_message 
+            return markdown_message
 
         elif(parse_mode == ParseMode.HTML):
-            # if markdown
-            html_message = f'''{title_html}
-    {MsgLabelsHTML.TOKEN_SUPPLY}: {token_supply}
+            # if html
+            html_message = f'''
+    {MsgLabelsHTML.TYPE}: {data['type']}
+    {MsgLabelsHTML.ROLE}: {data['role']}
+    {MsgLabelsHTML.HEIGHT}: {data['height']}
+    {MsgLabelsMD.TIME}: {escape(get_iso_utc_time_from_posix(data['time']))}
     '''
             return html_message
         else:
