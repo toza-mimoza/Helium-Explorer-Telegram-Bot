@@ -16,3 +16,5 @@ def get_days_ago_time_str(days):
     days_ago = now - timedelta(days=days)
     return days_ago.isoformat()
 
+def get_iso_utc_time_from_posix(posix):
+    return datetime.utcfromtimestamp(posix)
